@@ -1,4 +1,5 @@
 out
-**/.obj
+**/*.obj
+**/*.OBJ
 **/1.exe
 **/1.EXE
