@@ -1,3 +1,12 @@
+;在屏幕中间的位置显示不同颜色属性的三行文字
+;向0B00:0开始的一段内存空间写入数据时会显示在屏幕上(B8000H-BFFFFH)
+;每屏可显示80列*24行字符
+;每个字符占用两个字节内存,低字节是ascii，高字节是字符的颜色等属性
+;颜色属性格式：7   6  5  4    3   2  1  0 (位)
+;            (BL) (R  G  B)  I  (R  G  B)
+;            闪烁  背景色 高亮  前景色
+;每行占160字符
+
 assume cs:codesg,ds:datasg
 
 colorsg segment
@@ -43,9 +52,17 @@ start:          mov ax,0B800H                 ;显示缓冲区第一页首地址
                 mov cx,dx                     ;恢复外层cx
                 inc di                        ;指向下一个字符属性
                 add bp,128                    ;每完成一行，bp指向第32(从0开始)字节,增加(160-32)使bp指向下一行行首
-                loop scolor
 
-                mov ax,4c00h
+;使用loop
+;                loop scolor
+
+;或使用jczx
+                dec cx
+                jcxz out_end                 ;如果cx是0则跳转到结束       
+                jmp scolor
+
+
+      out_end:  mov ax,4c00h
                 int 21h
 
 
